@@ -1,19 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NomNomicon</title>
-</head>
+<html>
+<head><title>Menu</title></head>
 <body>
-    <header>
-        <h1>Welcome to NomNomicon</h1>
-    </header>
-    <main>
-        <p>Your go-to place for delicious recipes!</p>
-    </main>
-    <footer>
-        <p>&copy; 2023 NomNomicon. All rights reserved.</p>
-    </footer>
+  <h1>Add a Dish</h1>
+  <form method="POST" action="/add_dish">
+    Name: <input name="name"><br>
+    Category: 
+    <select name="category">
+      <option value="starter">Starter</option>
+      <option value="main">Main</option>
+      <option value="dessert">Dessert</option>
+    </select><br>
+    Ingredients (comma-separated): <input name="ingredients"><br>
+    <button type="submit">Add Dish</button>
+  </form>
+
+  <h2>Starters</h2>
+  <ul>
+    {% for dish in starters %}
+      <li>{{ dish.name }} 
+        <a href="/delete_dish/{{ dish.id }}">[Remove]</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Main Dishes</h2>
+  <ul>
+    {% for dish in mains %}
+      <li>{{ dish.name }} 
+        <a href="/delete_dish/{{ dish.id }}">[Remove]</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Desserts</h2>
+  <ul>
+    {% for dish in desserts %}
+      <li>{{ dish.name }} 
+        <a href="/delete_dish/{{ dish.id }}">[Remove]</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <a href="/ingredients">Generate Ingredient List</a>
 </body>
 </html>
