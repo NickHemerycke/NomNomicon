@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html>
-<head><title>Ingredients</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredients</title>
+</head>
 <body>
-  <h1>Ingredients List</h1>
-  <ul>
-    {% for ingredient in ingredients %}
-      <li>{{ ingredient }}</li>
-    {% endfor %}
-  </ul>
-  <a href="/">Back to Menu</a>
+    <h1>Ingredients</h1>
+    <ul>
+        {% for ingredient in ingredients %}
+        <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
