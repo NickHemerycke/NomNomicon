@@ -3,8 +3,28 @@
 <head>
     <title>NomNomicon</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
     <h1 class = "header">Dishes</h1>
+
+    <div id = "appetizer-list">
+        <h2>appetizers</h2>
+        <input type="text" id="item-input1" placeholder="Enter item">
+        <button onclick="addItemApp()">Add</button>
+    </div>
+
+    <div id = "lunches-list">
+        <h2>lunches</h2>
+        <input type="text" id="item-input2" placeholder="Enter item">
+        <button onclick="addItemLunch()">Add</button>
+    </div>
+
+    <div id = "dinners-list">
+        <h2>dinners</h2>
+        <input type="text" id="item-input3" placeholder="Enter item">
+        <button onclick="addItemDinner()">Add</button>
+    </div>
+
 </body>
 </html>
