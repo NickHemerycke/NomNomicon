@@ -13,9 +13,9 @@
     </header>
     <div class="container mt-5">
         <div class="d-flex gap-2 justify-content-center mb-4 py-4"> 
-            <button onclick ="location.href='http://localhost:5000/menu'" class="btn btn-primary w-25">Menu</button>
-            <button onclick ="location.href='http://localhost:5000'" class="btn btn-primary w-25">Dishes</button>
-            <button onclick ="location.href='http://localhost:5000/ingredients'" class="btn btn-secondary w-25">Groceries</button>
+            <button onclick ="location.href='{{ url_for('menu') }}'" class="btn btn-primary w-25">Menu</button>
+            <button onclick ="location.href='{{ url_for('home') }}'" class="btn btn-primary w-25">Dishes</button>
+            <button onclick ="location.href='{{ url_for('ingredients') }}'" class="btn btn-secondary w-25">Groceries</button>
         </div>
 
         <h2 class="mb-3">Your Grocery list</h2>
