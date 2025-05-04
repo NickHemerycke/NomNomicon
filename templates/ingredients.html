@@ -13,18 +13,20 @@
     </header>
     <div class="container mt-5">
         <div class="d-flex gap-2 justify-content-center mb-4 py-4"> 
-            <button onclick ="location.href='{{ url_for('menu') }}'" class="btn btn-primary w-25">Menu</button>
-            <button onclick ="location.href='{{ url_for('home') }}'" class="btn btn-primary w-25">Dishes</button>
-            <button onclick ="location.href='{{ url_for('ingredients') }}'" class="btn btn-secondary w-25">Groceries</button>
+            <button onclick="location.href='{{ url_for('menu') }}'" class="btn btn-primary w-25">Menu</button>
+            <button onclick="location.href='{{ url_for('home') }}'" class="btn btn-primary w-25">Dishes</button>
+            <button onclick="location.href='{{ url_for('ingredients') }}'" class="btn btn-secondary w-25">Groceries</button>
         </div>
 
-        <h2 class="mb-3">Your Grocery list</h2>
+        <h2 class="mb-3">Your Grocery List</h2>
         <ul class="list-group mb-5">
-            {% for ingredient in ingredients %}
-                <li class="list-group-item">{{ ingredient }}</li>
+            {% if ingredient_count %}
+                {% for ingredient, count in ingredient_count.items() %}
+                    <li class="list-group-item">{{ ingredient }} x{{ count }}</li>
+                {% endfor %}
             {% else %}
                 <li class="list-group-item text-muted text-center">No ingredients to show.</li>
-            {% endfor %}
+            {% endif %}
         </ul>
 
     </div>

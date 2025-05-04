@@ -69,15 +69,19 @@ def delete(dish_id):
 
 @app.route('/ingredients')
 def ingredients():
-    # Get ingredients from dishes that are added to the menu
-    dishes_on_menu = Dish.query.filter_by(addToMenu=True).all()
+    
+    grocery_items = Ingredient.query.join(Dish).filter(Dish.addToMenu == True).all()
+    
+    
+    ingredient_count = {}
+    for ingredient in grocery_items:
+        if ingredient.name in ingredient_count:
+            ingredient_count[ingredient.name] += 1
+        else:
+            ingredient_count[ingredient.name] = 1
+    
+    return render_template('ingredients.html', ingredient_count=ingredient_count)
 
-    # Flatten list of all ingredients from those dishes
-    all_ingredients = []
-    for dish in dishes_on_menu:
-        all_ingredients.extend([ingredient.name for ingredient in dish.ingredients])
-
-    return render_template('ingredients.html', ingredients=all_ingredients)
 
 
 
