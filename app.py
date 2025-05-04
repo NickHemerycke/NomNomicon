@@ -12,24 +12,26 @@ db = SQLAlchemy(app)
 
 class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    appetizer = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(80), nullable=False)
+    meal_type = db.Column(db.String(80), nullable=False)
     addToMenu = db.Column(db.Boolean, default=False)
 
-# Home route
 @app.route('/')
 @app.route('/dishes')
 def home():
-    dishes = Dish.query.all()  
-    return render_template('index.html', dishes=dishes)  
+    appetizers = Dish.query.filter_by(meal_type='appetizer').all()
+    lunches = Dish.query.filter_by(meal_type='lunch').all()
+    dinners = Dish.query.filter_by(meal_type='dinner').all()
+    return render_template('index.html', appetizers=appetizers, lunches=lunches, dinners=dinners)  
 
-# Add a new dish route
 @app.route('/add', methods=['POST'])
 def add():
-    appetizer = request.form.get('appetizer')  
-    new_dish = Dish(appetizer=appetizer)  
-    db.session.add(new_dish)  
-    db.session.commit()  
-    return redirect('/')  
+    name = request.form.get('dish_name')
+    meal_type = request.form.get('meal_type')
+    new_dish = Dish(name=name, meal_type=meal_type)
+    db.session.add(new_dish)
+    db.session.commit()
+    return redirect('/') 
 
 
 @app.route('/addToMenu/<int:dish_id>')
