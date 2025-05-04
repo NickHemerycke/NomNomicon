@@ -45,6 +45,9 @@ Make sure you have the following installed on your machine:
 5. **Start Adding Dishes**:
     Visit the app at `http://127.0.0.1:5000` and begin adding your dishes and planning your weekly menu!
 
+6. **future implementations**:
+    user authentication, frontend framework and ...
+
 ## Contributing
 If you'd like to contribute to this project, feel free to fork the repository, make changes, and create a pull request. Contributions, issues, and suggestions are always welcome!
 
