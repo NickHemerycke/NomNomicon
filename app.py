@@ -5,11 +5,11 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Database setup
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dish.db'
 db = SQLAlchemy(app)
 
-# Model: Dish (note the PascalCase naming convention)
+
 class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appetizer = db.Column(db.String(200), nullable=False)
@@ -19,19 +19,19 @@ class Dish(db.Model):
 @app.route('/')
 @app.route('/dishes')
 def home():
-    dishes = Dish.query.all()  # Fetch all dishes from the database
-    return render_template('index.html', dishes=dishes)  # Pass dishes to template
+    dishes = Dish.query.all()  
+    return render_template('index.html', dishes=dishes)  
 
 # Add a new dish route
 @app.route('/add', methods=['POST'])
 def add():
-    appetizer = request.form.get('appetizer')  # Get the 'appetizer' value from the form
-    new_dish = Dish(appetizer=appetizer)  # Create a new dish instance
-    db.session.add(new_dish)  # Add the new dish to the session
-    db.session.commit()  # Commit the session to save the dish in the database
-    return redirect('/')  # Redirect back to the home page
+    appetizer = request.form.get('appetizer')  
+    new_dish = Dish(appetizer=appetizer)  
+    db.session.add(new_dish)  
+    db.session.commit()  
+    return redirect('/')  
 
-# Mark dish as complete
+
 @app.route('/addToMenu/<int:dish_id>')
 def addToMenu(dish_id):
     dish = Dish.query.get(dish_id)  
@@ -39,25 +39,25 @@ def addToMenu(dish_id):
     db.session.commit()  
     return redirect('/')  
 
-# Delete a dish
+
 @app.route('/delete/<int:dish_id>')
 def delete(dish_id):
-    dish = Dish.query.get(dish_id)  # Find the dish by its ID
-    db.session.delete(dish)  # Delete the dish
-    db.session.commit()  # Commit the changes to the database
-    return redirect('/')  # Redirect to the home page
+    dish = Dish.query.get(dish_id)  
+    db.session.delete(dish)  
+    db.session.commit() 
+    return redirect('/') 
 
-# Ingredients page route
+
 @app.route('/ingredients')
 def ingredients():
-    return render_template('ingredients.html')  # Render the ingredients page
+    return render_template('ingredients.html')  
 
-# Menu page route
+
 @app.route('/menu')
 def menu():
-    return render_template('menu.html')  # Render the menu page
+    return render_template('menu.html')  
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create all the tables in the database
-    app.run(debug=True)  # Run the app in debug mode
+        db.create_all() 
+    app.run(debug=True)  
