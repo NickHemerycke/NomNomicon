@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appetizer = db.Column(db.String(200), nullable=False)
-    complete = db.Column(db.Boolean, default=False)
+    addToMenu = db.Column(db.Boolean, default=False)
 
 # Home route
 @app.route('/')
@@ -32,12 +32,12 @@ def add():
     return redirect('/')  # Redirect back to the home page
 
 # Mark dish as complete
-@app.route('/complete/<int:dish_id>')
-def complete(dish_id):
-    dish = Dish.query.get(dish_id)  # Find the dish by its ID
-    dish.complete = not dish.complete  # Toggle the 'complete' field
-    db.session.commit()  # Commit the changes to the database
-    return redirect('/')  # Redirect to the home page
+@app.route('/addToMenu/<int:dish_id>')
+def addToMenu(dish_id):
+    dish = Dish.query.get(dish_id)  
+    dish.addToMenu = not dish.addToMenu  
+    db.session.commit()  
+    return redirect('/')  
 
 # Delete a dish
 @app.route('/delete/<int:dish_id>')
