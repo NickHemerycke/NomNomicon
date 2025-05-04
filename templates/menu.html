@@ -18,6 +18,20 @@
             <button onclick ="location.href='http://localhost:5000'" class="btn btn-primary w-25">Dishes</button>
             <button onclick ="location.href='http://localhost:5000/ingredients'" class="btn btn-primary w-25">Groceries</button>
         </div>
+
+        <h2 class="mb-3">Your Menu</h2>
+        <ul class="list-group mb-5">
+            {% for dish in menu_items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ dish.name }} ({{ dish.meal_type.capitalize() }})
+                </li>
+            {% else %}
+                <li class="list-group-item text-center text-muted">
+                    No dishes have been added to the menu yet.
+                </li>
+            {% endfor %}
+        </ul>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

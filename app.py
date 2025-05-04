@@ -16,6 +16,14 @@ class Dish(db.Model):
     meal_type = db.Column(db.String(80), nullable=False)
     addToMenu = db.Column(db.Boolean, default=False)
 
+class Ingredient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    dish_id = db.Column(db.Integer, db.ForeignKey('dish.id'), nullable=False)
+
+    dish = db.relationship('Dish', backref=db.backref('ingredients', cascade='all, delete-orphan'))
+
+
 @app.route('/')
 @app.route('/dishes')
 def home():
@@ -28,10 +36,19 @@ def home():
 def add():
     name = request.form.get('dish_name')
     meal_type = request.form.get('meal_type')
+    ingredient_list = request.form.getlist('ingredients')  # Get all inputs named "ingredients"
+
     new_dish = Dish(name=name, meal_type=meal_type)
     db.session.add(new_dish)
+    db.session.flush()  # To get the ID before commit
+
+    for ingredient_name in ingredient_list:
+        if ingredient_name.strip():
+            db.session.add(Ingredient(name=ingredient_name.strip(), dish_id=new_dish.id))
+
     db.session.commit()
-    return redirect('/') 
+    return redirect('/')
+ 
 
 
 @app.route('/addToMenu/<int:dish_id>')
@@ -52,12 +69,22 @@ def delete(dish_id):
 
 @app.route('/ingredients')
 def ingredients():
-    return render_template('ingredients.html')  
+    # Get ingredients from dishes that are added to the menu
+    dishes_on_menu = Dish.query.filter_by(addToMenu=True).all()
+
+    # Flatten list of all ingredients from those dishes
+    all_ingredients = []
+    for dish in dishes_on_menu:
+        all_ingredients.extend([ingredient.name for ingredient in dish.ingredients])
+
+    return render_template('ingredients.html', ingredients=all_ingredients)
+
 
 
 @app.route('/menu')
 def menu():
-    return render_template('menu.html')  
+    menu_items = Dish.query.filter_by(addToMenu=True).all()
+    return render_template('menu.html', menu_items=menu_items) 
 
 if __name__ == '__main__':
     with app.app_context():

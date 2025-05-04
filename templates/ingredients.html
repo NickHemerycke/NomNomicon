@@ -17,6 +17,16 @@
             <button onclick ="location.href='http://localhost:5000'" class="btn btn-primary w-25">Dishes</button>
             <button onclick ="location.href='http://localhost:5000/ingredients'" class="btn btn-secondary w-25">Groceries</button>
         </div>
+
+        <h2 class="mb-3">Your Grocery list</h2>
+        <ul class="list-group mb-5">
+            {% for ingredient in ingredients %}
+                <li class="list-group-item">{{ ingredient }}</li>
+            {% else %}
+                <li class="list-group-item text-muted text-center">No ingredients to show.</li>
+            {% endfor %}
+        </ul>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
