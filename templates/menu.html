@@ -1,1 +1,26 @@
 {% extends "base.html"%}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">Your Menu</h1>    
+    
+    {% if recipes %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for recipe in recipes %}
+                <div class="bg-pink-500 rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-2 text-indigo-600">{{ recipe.name }}</h2>
+                    <p class="text-white mb-4"><strong>Category:</strong> {{ recipe.type }}</p>
+                    <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
+                    <form action="/add-to-menu" method="POST">
+                        <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                        <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600">No recipes available. Please add some recipes first.</p>
+    {% endif %}
+
+{% endblock %}

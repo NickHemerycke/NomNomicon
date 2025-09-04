@@ -38,7 +38,8 @@ def list():
 
 @app.route('/menu')
 def menu():
-    return render_template("menu.html")
+    recipes = Recipe.query.all()
+    return render_template("menu.html", recipes=recipes)
 
 @app.route('/submit-recipe', methods=['POST'])
 def submit_recipe():
