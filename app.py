@@ -34,12 +34,31 @@ def home():
 
 @app.route('/list')
 def list():
-    return render_template("list.html")
+    Recipes = Recipe.query.filter_by(selected=True).all()
+    return render_template("list.html", Recipes=Recipes)
 
 @app.route('/menu')
 def menu():
-    recipes = Recipe.query.all()
-    return render_template("menu.html", recipes=recipes)
+    appetizers = Recipe.query.filter_by(type="appetizer").all()
+    lunch = Recipe.query.filter_by(type="lunch").all()
+    dinner = Recipe.query.filter_by(type="dinner").all()
+    selected = Recipe.query.filter_by(selected=True).all()
+    return render_template("menu.html", appetizers=appetizers, lunch=lunch, dinner=dinner, selected=selected)
+
+
+@app.route('/add-to-menu', methods=['POST'])
+def add_to_menu():
+    recipe_id = request.form.get("recipe_id")
+    recipe = Recipe.query.get(recipe_id)
+    if recipe:
+        recipe.selected = True
+        db.session.commit()
+        flash(f"{recipe.name} added to your menu!", "success")
+    else:
+        flash("Recipe not found.", "error")
+    return redirect(url_for("menu"))
+
+
 
 @app.route('/submit-recipe', methods=['POST'])
 def submit_recipe():

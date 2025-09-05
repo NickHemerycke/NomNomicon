@@ -1,1 +1,16 @@
 {% extends "base.html"%}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">Your Grocery List</h1>
+    {% if Recipes %}
+        <ul class="list-disc list-inside bg-gray-100 rounded-lg p-6 shadow">
+            {% for recipe in Recipes %}
+                <li class="text-lg text-gray-800 mb-2">{{ recipe.name }} ({{ recipe.type }}) - Ingredients/Tags: {{ recipe.ingredients }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-600 text-center">No recipes selected for the grocery list yet.</p>
+    {% endif %}
+
+{% endblock %}
