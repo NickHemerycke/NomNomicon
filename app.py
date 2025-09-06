@@ -45,6 +45,11 @@ def home():
     dinner = Recipe.query.filter_by(type="dinner").all()
     return render_template("home.html", appetizers=appetizers, lunch=lunch, dinner=dinner)
 
+@app.route("/upgrade-db")
+def upgrade_db():
+    from flask_migrate import upgrade
+    upgrade()
+    return "Database upgraded!"
 
 @app.route("/list")
 def list():
@@ -98,6 +103,30 @@ def submit_recipe():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm = request.form.get("confirm")
+
+        if not name or not email or not password or not confirm:
+            flash("All fields are required!", "error")
+            return redirect(url_for("register"))
+        if password != confirm:
+            flash("Passwords do not match!", "error")
+            return redirect(url_for("register"))
+        if User.query.filter_by(email=email).first():
+            flash("Email already registered!", "error")
+            return redirect(url_for("register"))
+
+        user = User(name=name, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        flash("Registration successful!", "success")
+        return redirect(url_for("home"))
+
     return render_template("register.html")
 
 
@@ -105,7 +134,33 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        # Validate input
+        if not email or not password:
+            flash("Email and password are required.", "error")
+            return redirect(url_for("login"))
+
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+
+        # Check password
+        if user and user.check_password(password):
+            login_user(user)  # Flask-Login logs in the user
+            flash(f"Welcome back, {user.name}!", "success")
+
+            # Redirect to next page if available
+            next_page = request.args.get("next")
+            return redirect(next_page or url_for("home"))
+        else:
+            flash("Invalid email or password.", "error")
+            return redirect(url_for("login"))
+
+    # GET request → show login form
     return render_template("login.html")
+
 
 
 @app.route("/logout")
