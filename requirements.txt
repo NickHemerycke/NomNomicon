@@ -6,3 +6,4 @@ python-dotenv>=1.0.0
 Flask-Migrate>=4.0.4
 Flask-Login>=0.6.3
 Werkzeug>=2.3.6
+kinde-python-sdk
