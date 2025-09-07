@@ -1,13 +1,11 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Recipe
 from config import Config
 from dotenv import find_dotenv, load_dotenv
-from sqlalchemy import or_
 
-# Load environment variables from .env if present
+# Load environment variables
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
@@ -16,21 +14,20 @@ if ENV_FILE:
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialize database & migrations
+# Initialize DB & Migrations
 db.init_app(app)
 migrate = Migrate(app, db)
 
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"  # where to redirect for @login_required
+login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    # flask-login passes user_id as string
     return User.query.get(int(user_id))
 
-# create tables if they don't exist (useful for quick dev; in production prefer migrations)
+# Create tables if missing
 with app.app_context():
     db.create_all()
 
@@ -40,10 +37,14 @@ with app.app_context():
 # -----------------------------
 @app.route("/")
 def home():
-    appetizers = Recipe.query.filter_by(type="appetizer").all()
-    lunch = Recipe.query.filter_by(type="lunch").all()
-    dinner = Recipe.query.filter_by(type="dinner").all()
+    if current_user.is_authenticated:
+        appetizers = Recipe.query.filter_by(type="appetizer", user_id=current_user.id).all()
+        lunch = Recipe.query.filter_by(type="lunch", user_id=current_user.id).all()
+        dinner = Recipe.query.filter_by(type="dinner", user_id=current_user.id).all()
+    else:
+        appetizers, lunch, dinner = [], [], []
     return render_template("home.html", appetizers=appetizers, lunch=lunch, dinner=dinner)
+
 
 @app.route("/upgrade-db")
 def upgrade_db():
@@ -51,35 +52,42 @@ def upgrade_db():
     upgrade()
     return "Database upgraded!"
 
+
 @app.route("/list")
+@login_required
 def list():
-    Recipes = Recipe.query.filter_by(selected=True).all()
+    Recipes = Recipe.query.filter_by(selected=True, user_id=current_user.id).all()
     return render_template("list.html", Recipes=Recipes)
 
 
 @app.route("/menu")
+@login_required
 def menu():
-    appetizers = Recipe.query.filter_by(type="appetizer").all()
-    lunch = Recipe.query.filter_by(type="lunch").all()
-    dinner = Recipe.query.filter_by(type="dinner").all()
-    selected = Recipe.query.filter_by(selected=True).all()
-    return render_template("menu.html", appetizers=appetizers, lunch=lunch, dinner=dinner, selected=selected)
+    appetizers = Recipe.query.filter_by(type="appetizer", user_id=current_user.id).all()
+    lunch = Recipe.query.filter_by(type="lunch", user_id=current_user.id).all()
+    dinner = Recipe.query.filter_by(type="dinner", user_id=current_user.id).all()
+    selected = Recipe.query.filter_by(selected=True, user_id=current_user.id).all()
+    return render_template(
+        "menu.html", appetizers=appetizers, lunch=lunch, dinner=dinner, selected=selected
+    )
 
 
 @app.route("/add-to-menu", methods=["POST"])
+@login_required
 def add_to_menu():
     recipe_id = request.form.get("recipe_id")
-    recipe = Recipe.query.get(recipe_id)
+    recipe = Recipe.query.filter_by(id=recipe_id, user_id=current_user.id).first()
     if recipe:
         recipe.selected = True
         db.session.commit()
         flash(f"{recipe.name} added to your menu!", "success")
     else:
-        flash("Recipe not found.", "error")
+        flash("Recipe not found or not yours.", "error")
     return redirect(url_for("menu"))
 
 
 @app.route("/submit-recipe", methods=["POST"])
+@login_required
 def submit_recipe():
     category = request.form.get("category")
     dish_name = request.form.get("dish_name")
@@ -89,7 +97,12 @@ def submit_recipe():
         flash("All fields are required!", "error")
         return redirect(url_for("home"))
 
-    recipe = Recipe(type=category, name=dish_name, ingredients=ingredients)
+    recipe = Recipe(
+        type=category,
+        name=dish_name,
+        ingredients=ingredients,
+        user_id=current_user.id
+    )
     db.session.add(recipe)
     db.session.commit()
 
@@ -98,9 +111,8 @@ def submit_recipe():
 
 
 # -----------------------------
-# Auth routes (register/login/logout)
+# Auth routes
 # -----------------------------
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -130,37 +142,27 @@ def register():
     return render_template("register.html")
 
 
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
 
-        # Validate input
         if not email or not password:
             flash("Email and password are required.", "error")
             return redirect(url_for("login"))
 
-        # Find user by email
         user = User.query.filter_by(email=email).first()
-
-        # Check password
         if user and user.check_password(password):
-            login_user(user)  # Flask-Login logs in the user
+            login_user(user)
             flash(f"Welcome back, {user.name}!", "success")
-
-            # Redirect to next page if available
             next_page = request.args.get("next")
             return redirect(next_page or url_for("home"))
         else:
             flash("Invalid email or password.", "error")
             return redirect(url_for("login"))
 
-    # GET request → show login form
     return render_template("login.html")
-
 
 
 @app.route("/logout")
@@ -171,6 +173,8 @@ def logout():
     return redirect(url_for("home"))
 
 
-# Run
+# -----------------------------
+# Run App
+# -----------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
