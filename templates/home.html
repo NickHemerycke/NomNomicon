@@ -103,8 +103,10 @@
 </div>
 {% else %}
 <!-- Show login image if not authenticated -->
-<div class="container mx-auto px-6 py-12 flex justify-center">
-  <img src="/static/images/login.png" alt="Please login" class="rounded-lg shadow-lg w-96">
+<div class="container mx-auto px-6 py-12 flex flex-col items-center space-y-6">
+  <p class="text-2xl font-bold text-pink-500">Please login to access NomNomicon</p>
+  <img src="/static/images/login.png" alt="Please login"
+       class="w-48 h-48 rounded-full shadow-2xl border-4 border-pink-500">
 </div>
 {% endif %}
 {% endblock %}

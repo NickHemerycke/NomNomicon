@@ -2,86 +2,94 @@
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
+  {% if current_user.is_authenticated %}
     <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">Your Menu</h1>    
 
     <!-- Selected Menu -->
     <div class="mb-12">
-        <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Selected Menu</h2>
-        {% if selected %}
-            <ul class="list-disc list-inside bg-gray-100 rounded-lg p-6 shadow">
-                {% for recipe in selected %}
-                    <li class="text-lg text-gray-800 mb-2">{{ recipe.name }} ({{ recipe.type }})</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="text-gray-600 text-center">No meals selected yet.</p>
-        {% endif %}
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Selected Menu</h2>
+      {% if selected %}
+        <ul class="list-disc list-inside bg-gray-100 rounded-lg p-6 shadow">
+          {% for recipe in selected %}
+            <li class="text-lg text-gray-800 mb-2">{{ recipe.name }} ({{ recipe.type }})</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-600 text-center">No meals selected yet.</p>
+      {% endif %}
     </div>
 
     <!-- Recipes by category -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Appetizers -->
-        <div>
-            <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Appetizers</h2>
-            {% if appetizers %}
-                <div class="space-y-6">
-                    {% for recipe in appetizers %}
-                        <div class="bg-pink-500 rounded-lg shadow-md p-6">
-                            <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
-                            <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
-                            <form action="/add-to-menu" method="POST">
-                                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-                                <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
-                            </form>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-gray-600 text-center">No appetizers yet.</p>
-            {% endif %}
-        </div>
+      <!-- Appetizers -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Appetizers</h2>
+        {% if appetizers %}
+          <div class="space-y-6">
+            {% for recipe in appetizers %}
+              <div class="bg-pink-500 rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
+                <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
+                <form action="/add-to-menu" method="POST">
+                  <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                  <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-600 text-center">No appetizers yet.</p>
+        {% endif %}
+      </div>
 
-        <!-- Lunches -->
-        <div>
-            <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Lunches</h2>
-            {% if lunch %}
-                <div class="space-y-6">
-                    {% for recipe in lunch %}
-                        <div class="bg-pink-500 rounded-lg shadow-md p-6">
-                            <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
-                            <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
-                            <form action="/add-to-menu" method="POST">
-                                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-                                <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
-                            </form>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-gray-600 text-center">No lunches yet.</p>
-            {% endif %}
-        </div>
+      <!-- Lunches -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Lunches</h2>
+        {% if lunch %}
+          <div class="space-y-6">
+            {% for recipe in lunch %}
+              <div class="bg-pink-500 rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
+                <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
+                <form action="/add-to-menu" method="POST">
+                  <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                  <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-600 text-center">No lunches yet.</p>
+        {% endif %}
+      </div>
 
-        <!-- Dinners -->
-        <div>
-            <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Dinners</h2>
-            {% if dinner %}
-                <div class="space-y-6">
-                    {% for recipe in dinner %}
-                        <div class="bg-pink-500 rounded-lg shadow-md p-6">
-                            <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
-                            <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
-                            <form action="/add-to-menu" method="POST">
-                                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-                                <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
-                            </form>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-gray-600 text-center">No dinners yet.</p>
-            {% endif %}
-        </div>
+      <!-- Dinners -->
+      <div>
+        <h2 class="text-2xl font-semibold mb-4 text-indigo-600 text-center">Dinners</h2>
+        {% if dinner %}
+          <div class="space-y-6">
+            {% for recipe in dinner %}
+              <div class="bg-pink-500 rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-2 text-white">{{ recipe.name }}</h3>
+                <p class="text-white mb-4"><strong>Ingredients/Tags:</strong> {{ recipe.ingredients }}</p>
+                <form action="/add-to-menu" method="POST">
+                  <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                  <button type="submit" class="bg-white text-black px-4 py-2 rounded hover:bg-indigo-700 transition">Add to Menu</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-600 text-center">No dinners yet.</p>
+        {% endif %}
+      </div>
     </div>
+  {% else %}
+    <div class="flex flex-col items-center justify-center space-y-6">
+      <p class="text-2xl font-bold text-pink-600">Please login to view your menu</p>
+      <img src="/static/images/login.png" alt="Login required"
+           class="w-48 h-48 rounded-full shadow-2xl border-4 border-pink-500">
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

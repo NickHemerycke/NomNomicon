@@ -2,15 +2,25 @@
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
+  {% if current_user.is_authenticated %}
     <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">Your Grocery List</h1>
     {% if Recipes %}
-        <ul class="list-disc list-inside bg-gray-100 rounded-lg p-6 shadow">
-            {% for recipe in Recipes %}
-                <li class="text-lg text-gray-800 mb-2">{{ recipe.name }} ({{ recipe.type }}) - Ingredients/Tags: {{ recipe.ingredients }}</li>
-            {% endfor %}
-        </ul>
+      <ul class="list-disc list-inside bg-gray-100 rounded-lg p-6 shadow">
+        {% for recipe in Recipes %}
+          <li class="text-lg text-gray-800 mb-2">
+            {{ recipe.name }} ({{ recipe.type }}) - Ingredients/Tags: {{ recipe.ingredients }}
+          </li>
+        {% endfor %}
+      </ul>
     {% else %}
-        <p class="text-gray-600 text-center">No recipes selected for the grocery list yet.</p>
+      <p class="text-gray-600 text-center">No recipes selected for the grocery list yet.</p>
     {% endif %}
-
+  {% else %}
+    <div class="flex flex-col items-center justify-center space-y-6">
+      <p class="text-2xl font-bold text-pink-600">Please login to view your grocery list</p>
+      <img src="/static/images/login.png" alt="Login required"
+           class="w-48 h-48 rounded-full shadow-2xl border-4 border-pink-500">
+    </div>
+  {% endif %}
+</div>
 {% endblock %}
